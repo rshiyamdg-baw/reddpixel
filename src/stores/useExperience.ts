@@ -1,20 +1,24 @@
 import { create } from 'zustand'
 
-export enum MODES {
-  LANDING = 'LANDING',
-  TRAVERSAL = 'TRAVERSAL',
-  EXPLORE = 'EXPLORE'
-}
+// THE FIX: Change enum to a readonly object
+export const MODES = {
+  LANDING: 'LANDING',
+  TRAVERSAL: 'TRAVERSAL',
+  EXPLORE: 'EXPLORE'
+} as const;
+
+// Extract the type for your interface
+export type ModeType = typeof MODES[keyof typeof MODES];
 
 interface ExperienceState {
   currentPhase: number;
-  mode: MODES;
+  mode: ModeType; // <-- Use the new type here
   isTransitioning: boolean;
   isMobile: boolean;
   isLowEnd: boolean;
   
   setPhase: (phase: number) => void;
-  setMode: (mode: MODES) => void;
+  setMode: (mode: ModeType) => void; // <-- And here
   setIsTransitioning: (status: boolean) => void;
   setHardwareProfile: (isMobile: boolean, isLowEnd: boolean) => void;
   showTraversalControls: () => boolean;
@@ -33,7 +37,6 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   setHardwareProfile: (isMobile, isLowEnd) => set({ isMobile, isLowEnd }),
   
   showTraversalControls: () => {
-    // THE FIX: The UI stays visible on ALL phases greater than 0, even during Explore Mode!
     return get().currentPhase > 0;
   }
 }))

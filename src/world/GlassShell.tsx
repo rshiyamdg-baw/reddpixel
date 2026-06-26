@@ -12,7 +12,7 @@ const GlassShell: React.FC = () => {
   // Render the heavily optimized static cube for Mobile, 
   // and the complex WebGL shader for Desktop.
   if (isLowEnd) {
-    return <MobileBakedCube shellRef={shellRef} />
+    return <MobileBakedCube />
   }
 
   return <DesktopProceduralCube shellRef={shellRef} />

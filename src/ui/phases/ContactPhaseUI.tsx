@@ -12,18 +12,19 @@ const ContactPhaseUI: React.FC = () => {
   const tl = useRef<gsap.core.Timeline | null>(null)
 
   useGSAP(() => {
-    const formPanel = containerRef.current?.querySelector('.form-panel')
-    const items = containerRef.current?.querySelectorAll('.anim-item')
-
+    // THE FIX: Remove the manual querySelectors!
     gsap.set(containerRef.current, { autoAlpha: 0 })
 
     tl.current = gsap.timeline({ paused: true })
-      .to(containerRef.current, { autoAlpha: 1, duration: 0.1 })
-      .fromTo(formPanel, 
+      // Use "!" to promise TypeScript that containerRef.current is not null here
+      .to(containerRef.current!, { autoAlpha: 1, duration: 0.1 }) 
+      
+      // Pass the string selector directly! GSAP's scope handles the rest securely.
+      .fromTo('.form-panel', 
         { y: 50, scale: 0.95, opacity: 0 },
         { y: 0, scale: 1, opacity: 1, duration: 0.8, ease: 'expo.out' }
       )
-      .fromTo(items,
+      .fromTo('.anim-item',
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out' },
         "-=0.5"
