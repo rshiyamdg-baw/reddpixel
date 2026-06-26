@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useEffect } from 'react'
 import { SphereGeometry, ShaderMaterial, BackSide, MathUtils, Vector2, Mesh } from 'three'
 import { useFrame } from '@react-three/fiber'
 import { useExperience, MODES } from '../stores/useExperience'
-import gsap from 'gsap'
+
 
 const InnerWorldEnvironment: React.FC = () => {
   const currentPhase = useExperience((state) => state.currentPhase)
@@ -10,8 +10,14 @@ const InnerWorldEnvironment: React.FC = () => {
   const isLowEnd = useExperience((state) => state.isLowEnd)
   
   const envRef = useRef<Mesh>(null)
-  const prevPhaseRef = useRef<number>(currentPhase)
+ 
 
+  // We hold our targets in refs, totally decoupling them from React's render flashes!
+  const uOpacityTarget = useRef(0)
+  const uTravelTarget = useRef(0)
+  const uPanTarget = useRef(0)
+  const prevPhaseRef = useRef(currentPhase)
+  
   const uniforms = useRef({
       uTime: { value: 0 },
       uOpacity: { value: 0 },
@@ -21,29 +27,25 @@ const InnerWorldEnvironment: React.FC = () => {
   })
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-        // Opacity Tween
-        if (currentPhase >= 2) {
-            gsap.to(uniforms.current.uOpacity, { value: 1.0, duration: 0.6, delay: 0.3, ease: 'power2.out', overwrite: true })
-        } else {
-            gsap.to(uniforms.current.uOpacity, { value: 0.0, duration: 0.4, ease: 'power2.inOut', overwrite: true })
-        }
+    // 1. Handle the Opacity & Delay
+    if (currentPhase >= 2) {
+       // If coming from the outside (Phase 1), wait 1.2s before fading in!
+       if (prevPhaseRef.current < 2) setTimeout(() => { uOpacityTarget.current = 1.0 }, 700)
+       // If just moving between Phase 2 and 3, stay fully visible instantly!
+       else uOpacityTarget.current = 1.0
+       
+       uTravelTarget.current = (currentPhase - 2) * (Math.PI / 2.0)
+    } else {
+       uOpacityTarget.current = 0.0
+    }
+    
+    // 2. Handle Explore Pan
+    uPanTarget.current = (mode === MODES.EXPLORE && currentPhase >= 2) ? 0.3 : 0.0
+    
+    prevPhaseRef.current = currentPhase
+  }, [currentPhase, mode])
 
-        // Travel Offset Tween
-        if (currentPhase >= 2 && prevPhaseRef.current >= 2 && currentPhase !== prevPhaseRef.current) {
-            const targetRotation = (currentPhase - 2) * (Math.PI / 2.0)
-            gsap.to(uniforms.current.uTravelOffset, { value: targetRotation, duration: 1.8, ease: 'power3.inOut' })
-        }
-        prevPhaseRef.current = currentPhase
-
-        // Explore Pan Tween
-        const isExplore = mode === MODES.EXPLORE && currentPhase >= 2
-        gsap.to(uniforms.current.uExplorePan, { value: isExplore ? 0.3 : 0.0, duration: 1.5, ease: 'power3.inOut' })
-    });
-
-    // Banish the ghosts when the component unmounts!
-    return () => ctx.revert();
-}, [currentPhase, mode])
+      
 
   const { geometry, material } = useMemo(() => {
     // THE FIX: Mobile only gets 32x32 segments (approx 2000 triangles instead of 8000!)
@@ -150,23 +152,20 @@ const InnerWorldEnvironment: React.FC = () => {
     return { geometry: geo, material: mat }
   }, [isLowEnd]) 
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!envRef.current) return 
+    
+    uniforms.current.uOpacity.value = MathUtils.damp(uniforms.current.uOpacity.value, uOpacityTarget.current, 3, delta)
+    uniforms.current.uTravelOffset.value = MathUtils.damp(uniforms.current.uTravelOffset.value, uTravelTarget.current, 2, delta)
+    uniforms.current.uExplorePan.value = MathUtils.damp(uniforms.current.uExplorePan.value, uPanTarget.current, 3, delta)
+
     uniforms.current.uTime.value = state.clock.elapsedTime
     uniforms.current.uPointer.value.x = MathUtils.lerp(uniforms.current.uPointer.value.x, state.pointer.x, 0.05)
     uniforms.current.uPointer.value.y = MathUtils.lerp(uniforms.current.uPointer.value.y, state.pointer.y, 0.05)
   })
 
   return (
-    <mesh 
-      ref={envRef} 
-      geometry={geometry} 
-      material={material} 
-      raycast={() => null} 
-      // THE PERFORMANCE FIX: Stops the GPU from running 8,000 invisible triangles!
-      visible={currentPhase >= 2} 
-    />
+    <mesh ref={envRef} geometry={geometry} material={material} raycast={() => null} visible={currentPhase >= 1} />
   )
 }
-
 export default InnerWorldEnvironment
