@@ -20,7 +20,7 @@ const CSSRotatingCube = ({ colorClass }: { colorClass: string }) => (
 const PROJECTS = [
   { id: 1, title: "ALPHA TRADE", category: "Front-End", image: "/images/project1.jpg", description: "A high-performance landing page engineered for a premier trading signal service.", theme: { border: "border-cyan-500/30", borderBright: "border-cyan-400", text: "text-cyan-200", accent: "text-cyan-400", bg: "bg-cyan-950/20" } },
   { id: 2, title: "ARCHITECT 3D", category: "WebGL", image: "/images/project2.jpg", description: "An immersive 3D web portfolio built for an architect. Engineered the entire pipeline...", theme: { border: "border-red-500/30", borderBright: "border-red-500", text: "text-red-100", accent: "text-red-500", bg: "bg-red-950/20" } },
-  { id: 3, title: "HIGH VOLTAGE", category: "Hardware", image: "/images/project3.jpg", description: "A testament to physical hardware and raw electricity bridging with digital interfaces.", theme: { border: "border-amber-500/30", borderBright: "border-amber-400", text: "text-amber-100", accent: "text-amber-500", bg: "bg-amber-950/20" } }
+  { id: 3, title: "HIGH VOLTAGE", category: "Hardware", image: "/images/project3.jpg", description: "Not a web application, but a testament to physical hardware and raw electricity. From scaling massive radio towers in biting winds to engineering complex electrical systems in luxury smart homes, my foundation is built on real-world problem-solving and an absolute lack of vertigo.", theme: { border: "border-amber-500/30", borderBright: "border-amber-400", text: "text-amber-100", accent: "text-amber-500", bg: "bg-amber-950/20" } }
 ]
 
 const WorksPhaseUI: React.FC = () => {

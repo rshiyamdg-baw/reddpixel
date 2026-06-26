@@ -27,11 +27,9 @@ const InnerWorldEnvironment: React.FC = () => {
   })
 
   useEffect(() => {
-    // 1. Handle the Opacity & Delay
     if (currentPhase >= 2) {
-       // If coming from the outside (Phase 1), wait 1.2s before fading in!
-       if (prevPhaseRef.current < 2) setTimeout(() => { uOpacityTarget.current = 1.0 }, 700)
-       // If just moving between Phase 2 and 3, stay fully visible instantly!
+       // Delay fade-in if coming from the outside
+       if (prevPhaseRef.current < 2) setTimeout(() => { uOpacityTarget.current = 1.0 }, 1200)
        else uOpacityTarget.current = 1.0
        
        uTravelTarget.current = (currentPhase - 2) * (Math.PI / 2.0)
@@ -39,12 +37,9 @@ const InnerWorldEnvironment: React.FC = () => {
        uOpacityTarget.current = 0.0
     }
     
-    // 2. Handle Explore Pan
     uPanTarget.current = (mode === MODES.EXPLORE && currentPhase >= 2) ? 0.3 : 0.0
-    
     prevPhaseRef.current = currentPhase
   }, [currentPhase, mode])
-
       
 
   const { geometry, material } = useMemo(() => {
@@ -162,10 +157,16 @@ const InnerWorldEnvironment: React.FC = () => {
     uniforms.current.uTime.value = state.clock.elapsedTime
     uniforms.current.uPointer.value.x = MathUtils.lerp(uniforms.current.uPointer.value.x, state.pointer.x, 0.05)
     uniforms.current.uPointer.value.y = MathUtils.lerp(uniforms.current.uPointer.value.y, state.pointer.y, 0.05)
+
+    // THE CULLING SPELL:
+    // If the opacity is practically zero, cut the mesh out of the render loop entirely!
+    // Phase 0 and 1 will now sit at beautifully low triangle counts.
+    envRef.current.visible = uniforms.current.uOpacity.value > 0.005;
   })
 
   return (
-    <mesh ref={envRef} geometry={geometry} material={material} raycast={() => null} visible={currentPhase >= 1} />
+    // THE FIX: Removed the declarative 'visible' prop so our useFrame can control it mathematically!
+    <mesh ref={envRef} geometry={geometry} material={material} raycast={() => null} />
   )
 }
 export default InnerWorldEnvironment
