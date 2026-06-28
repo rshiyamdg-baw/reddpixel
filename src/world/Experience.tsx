@@ -5,7 +5,7 @@ import TimelineBridge from '../core/timeline/TimelineBridge'
 import GlassShell from './GlassShell'
 import InnerWorldEnvironment from './InnerWorldEnvironment'
 import GemAura from './GemAura' // YOUR ORIGINAL GEM AURA RESTORED
-import { Perf } from 'r3f-perf'
+// import { Perf } from 'r3f-perf'
 
 const Scene: React.FC = () => {
   return (
