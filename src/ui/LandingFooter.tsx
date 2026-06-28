@@ -1,5 +1,8 @@
 import React from 'react'
 import { useExperience } from '../stores/useExperience'
+import { jumpToPhase } from '../core/timeline/cinematicController'
+// ... inside your component where you want the button:
+
 
 const LandingFooter: React.FC = () => {
   const currentPhase = useExperience((state) => state.currentPhase)
@@ -15,7 +18,14 @@ const LandingFooter: React.FC = () => {
         <p className="font-mono text-[9px] tracking-[0.3em] text-white/50 uppercase ml-6">Interactive Architect</p>
       </div>
       <div className="text-right">
-        <p className="font-mono text-[10px] tracking-widest text-white/40 uppercase">SYS.ONLINE // {new Date().getFullYear()}</p>
+      <button 
+  onClick={() => jumpToPhase(3)} 
+  className="pointer-events-auto group relative flex items-center gap-3 px-6 py-2 border border-red-500/50 bg-[#050000]/60 backdrop-blur-md hover:bg-red-950/40 transition-all"
+>
+  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_#ef4444]" />
+  <span className="text-[10px] tracking-[0.2em] text-red-200 group-hover:text-white transition-colors">SUMMON AI ORACLE</span>
+</button>
+        
       </div>
     </footer>
   )

@@ -21,8 +21,8 @@ const MobileBakedCube: React.FC = () => {
 
   colorMap.flipY = false; normalMap.flipY = false; roughnessMap.flipY = false; metalnessMap.flipY = false;
   const envMap = useEnvironment({ preset: 'city' }) 
-
-  // THE FIX: Adding weightless floating and slow rotation!
+  // const envMap = useEnvironment({ files: '/textures/custom_env.hdr' })
+  // Adding weightless floating and slow rotation!
   useFrame((state) => {
     if (shellRef.current) {
       // Base rotations from the cinematic GSAP controller
@@ -30,11 +30,11 @@ const MobileBakedCube: React.FC = () => {
       shellRef.current.rotation.z = worldState.cubeRotZ
       
       // Combine GSAP rotation with a slow, constant time-based spin!
-      shellRef.current.rotation.y = worldState.cubeRotY + state.clock.elapsedTime * 0.08
+      shellRef.current.rotation.y = worldState.cubeRotY + state.clock.elapsedTime * 0.04
       
       // Gentle floating up and down (bobbing effect)
       if (currentPhase < 3) {
-         shellRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.08
+         shellRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.04
       }
     }
   })

@@ -39,7 +39,7 @@ const Experience: React.FC = () => {
         camera={{ fov: 45, near: 0.01, far: 500, position: [0, 0, 12] }}
         shadows={!isLowEnd} // Off entirely on mobile!
       >
-        <Perf />
+        {/* <Perf /> */}
         <Suspense fallback={null}>
           <Scene />
         </Suspense>

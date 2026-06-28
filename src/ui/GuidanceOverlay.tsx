@@ -25,7 +25,7 @@ const GuidanceOverlay: React.FC = () => {
 
       <div className={`absolute bottom-[12%] left-1/2 -translate-x-1/2 w-64 h-24 transition-opacity duration-1000 ${navHintsVisible && !isTransitioning ? 'opacity-100' : 'opacity-0'}`}>
         <p className="absolute bottom-0 left-0 font-mono text-[9px] tracking-widest text-white/50">&#8592; PREV</p>
-        <p className="absolute top-0 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-widest text-red-400">ACCESS DATA</p>
+        
         <p className="absolute bottom-0 right-0 font-mono text-[9px] tracking-widest text-white/50">NEXT &#8594;</p>
       </div>
     </div>
