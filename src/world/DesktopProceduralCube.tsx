@@ -24,8 +24,9 @@ const DesktopProceduralCube: React.FC<Props> = ({ shellRef }) => {
     })
 
     mat.onBeforeCompile = (shader: any) => {
-      shader.vertexShader = `varying vec3 vLocalNormal; varying vec2 vMyUv;\n${shader.vertexShader}`.replace('#include <begin_vertex>', `#include <begin_vertex>\nvLocalNormal = normal; vMyUv = uv;`)
+      shader.vertexShader = `precision highp float; varying vec3 vLocalNormal; varying vec2 vMyUv;\n${shader.vertexShader}`.replace('#include <begin_vertex>', `#include <begin_vertex>\nvLocalNormal = normal; vMyUv = uv;`)
       shader.fragmentShader = `
+         precision highp float;
          varying vec3 vLocalNormal; varying vec2 vMyUv;
          vec2 hash2(vec2 p) { p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return fract(sin(p) * 43758.5453); }
          struct Vitrail { vec3 color; float lead; vec3 normalTilt; };
