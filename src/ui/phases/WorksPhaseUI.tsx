@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState,useEffect } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useExperience, MODES } from '../../stores/useExperience'
@@ -26,9 +26,9 @@ const UnifiedPersianNode = ({ solidBg, shadow }: { solidBg: string, shadow: stri
 )
 
 const PROJECTS = [
-  { id: 1, title: "ALPHA TRADE", category: "Front-End", image: "/images/project1.jpg", description: "A high-performance landing page engineered for a premier trading signal service. Scalable, secure, and visually commanding.", link: "https://example.com", theme: { solidBg: "bg-cyan-500", shadow: "shadow-[0_0_15px_#06b6d4]", line: "from-cyan-500", border: "border-cyan-500/30", borderBright: "border-cyan-400", text: "text-cyan-200", accent: "text-cyan-400" } },
-  { id: 2, title: "ARCHITECT 3D", category: "WebGL", image: "/images/project2.jpg", description: "An immersive 3D web portfolio built for an architect. Engineered the entire pipeline from 3D modeling to React rendering.", link: "https://example.com", theme: { solidBg: "bg-red-500", shadow: "shadow-[0_0_15px_#ef4444]", line: "from-red-500", border: "border-red-500/30", borderBright: "border-red-500", text: "text-red-100", accent: "text-red-500" } },
-  { id: 3, title: "HIGH VOLTAGE", category: "Hardware", image: "/images/project3.jpg", description: "A testament to physical hardware and raw electricity bridging with digital interfaces. Built with classified components.", link: null, theme: { solidBg: "bg-amber-500", shadow: "shadow-[0_0_15px_#f59e0b]", line: "from-amber-500", border: "border-amber-500/30", borderBright: "border-amber-400", text: "text-amber-100", accent: "text-amber-500" } }
+  { id: 1, title: "ALPHA TRADE", category: "Front-End", image: "/images/project1.jpg", description: "A high-performance landing page engineered for a premier trading signal service. Built purely with React, Tailwind, and strict GSAP sequencing to deliver a buttery-smooth, premium DOM experience without relying on WebGL.", link: "#", theme: { solidBg: "bg-cyan-500", shadow: "shadow-[0_0_15px_#06b6d4]", line: "from-cyan-500", border: "border-cyan-500/30", borderBright: "border-cyan-400", text: "text-cyan-200", accent: "text-cyan-400" } },
+  { id: 2, title: "ARCHITECT 3D", category: "WebGL", image: "/images/project2.jpg", description: "An immersive 3D web portfolio built for an architect. Engineered the entire pipeline from 3D modeling to React rendering.", link: "#", theme: { solidBg: "bg-red-500", shadow: "shadow-[0_0_15px_#ef4444]", line: "from-red-500", border: "border-red-500/30", borderBright: "border-red-500", text: "text-red-100", accent: "text-red-500" } },
+  { id: 3, title: "HIGH VOLTAGE", category: "Hardware", image: "/images/project3.jpg", description: "Not a web application, but a testament to physical hardware and raw electricity. From scaling massive radio towers in biting winds to engineering complex electrical systems in luxury smart homes, my foundation is built on real-world problem-solving and an absolute lack of vertigo.", link: null, theme: { solidBg: "bg-amber-500", shadow: "shadow-[0_0_15px_#f59e0b]", line: "from-amber-500", border: "border-amber-500/30", borderBright: "border-amber-400", text: "text-amber-100", accent: "text-amber-500" } }
 ]
 
 const WorksPhaseUI: React.FC = () => {
@@ -43,23 +43,30 @@ const WorksPhaseUI: React.FC = () => {
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsClosing(true); setExpandedId(null);
-    setTimeout(() => setIsClosing(false), 500); // THE FIX: Reduced lock time!
+    setTimeout(() => setIsClosing(false), 500); 
   }
 
-  // ENTRANCE TIMELINE - Sped up for mobile snappiness!
+  // 1. ENTRANCE TIMELINE - Purified with Immutable Anchors!
   useGSAP(() => {
     const cards = gsap.utils.toArray('.project-window')
+    
+    // HARDCODE INITIAL STATES - Bypasses StrictMode Corruption!
     gsap.set(containerRef.current, { autoAlpha: 0 })
+    gsap.set('.anim-node', { scale: 0, rotate: 0 })
+    gsap.set('.anim-line', { scaleY: 0 })
+    gsap.set(cards, { y: 20, opacity: 0 })
+    gsap.set('.anim-compact-content', { opacity: 0, y: 10 })
 
     tl.current = gsap.timeline({ paused: true })
       .to(containerRef.current, { autoAlpha: 1, duration: 0.1 })
-      .fromTo('.anim-node', { scale: 0, rotate: 0 }, { scale: 1, rotate: 45, duration: 0.5, stagger: 0.05, ease: 'back.out(2)' })
-      .fromTo('.anim-line', { scaleY: 0 }, { scaleY: 1, duration: 0.3, stagger: 0.05, ease: 'power2.inOut' }, "-=0.1")
-      .fromTo(cards, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, "-=0.2")
-      .fromTo('.anim-compact-content', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, "-=0.2")
+      // Notice we use purely .to() calls now!
+      .to('.anim-node', { scale: 1, rotate: 45, duration: 0.5, stagger: 0.05, ease: 'back.out(2)' })
+      .to('.anim-line', { scaleY: 1, duration: 0.3, stagger: 0.05, ease: 'power2.inOut' }, "-=0.1")
+      .to(cards, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, "-=0.2")
+      .to('.anim-compact-content', { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 }, "-=0.2")
   }, { scope: containerRef })
 
-  // REACTION TIMELINE - Faster mechanical clicks!
+  // REACTION TIMELINE - Kept exactly as is!
   useGSAP(() => {
     if (expandedId !== null && !isClosing) {
       gsap.to(`#node-${expandedId}`, { scale: 1.3, rotate: 90, duration: 0.3, ease: 'power2.out' });
@@ -80,9 +87,11 @@ const WorksPhaseUI: React.FC = () => {
     }
   }, [expandedId, isClosing])
 
-  useGSAP(() => {
-    if (isExplore) tl.current?.timeScale(1).play()
-    else tl.current?.timeScale(2.5).reverse().then(() => setExpandedId(null))
+  // THE CONDUCTOR - Orchestrates safely
+  useEffect(() => {
+    if (!tl.current) return;
+    if (isExplore) tl.current.timeScale(1).play()
+    else tl.current.timeScale(2.5).reverse().then(() => setExpandedId(null))
   }, [isExplore])
 
   return (
